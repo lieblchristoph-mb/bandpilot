@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleDisplayName</key>
+    <string>BandPilot</string>
+    <key>CFBundleIdentifier</key>
+    <string>de.toffl.bandpilot</string>
+    <key>CFBundleName</key>
+    <string>BandPilot</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleExecutable</key>
+    <string>$(EXECUTABLE_NAME)</string>
+    <key>LSRequiresIPhoneOS</key>
+    <true/>
+    <key>UIRequiredDeviceCapabilities</key>
+    <array>
+        <string>armv7</string>
+    </array>
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+    <key>UIStatusBarStyle</key>
+    <string>UIStatusBarStyleLightContent</string>
+    <key>UIUserInterfaceStyle</key>
+    <string>Dark</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>BandPilot benötigt das Mikrofon um Proben und Songs aufzunehmen.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>BandPilot benötigt die Kamera um Videos hochzuladen.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>BandPilot benötigt Zugriff auf Fotos und Videos um Dateien hochzuladen.</string>
+    <key>UILaunchStoryboardName</key>
+    <string>LaunchScreen</string>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <false/>
+    </dict>
+</dict>
+</plist>
