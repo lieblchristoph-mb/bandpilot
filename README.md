@@ -120,3 +120,4 @@ sichern.
 - Farbige Kästchen zeigen den Status jedes Mitglieds; dein eigener ist umrandet.
 - Tage, an denen **alle frei** sind, leuchten auf und werden oben als perfekter
   Termin angezeigt.
+# bandpilot
