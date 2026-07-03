@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bedienungsanleitung – The Dead Notes App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0b12;
+      --panel: #1a1625;
+      --panel-2: #231d32;
+      --accent: #e8156a;
+      --accent2: #b5105a;
+      --text: #f0ecf8;
+      --muted: #7a6e8a;
+      --line: #2e2640;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    /* ---- Print ---- */
+    @media print {
+      body { background: #fff; color: #111; }
+      .topbar, .back-link, .print-btn { display: none !important; }
+      section { page-break-inside: avoid; break-inside: avoid; }
+      .screen { border: 1px solid #ccc !important; background: #f9f9f9 !important; }
+      .screen * { color: #111 !important; background: #f0f0f0 !important; }
+      .chip, .btn-mock { border: 1px solid #aaa !important; }
+      h1, h2, h3 { color: #111 !important; }
+      .muted { color: #555 !important; }
+    }
+
+    /* ---- Layout ---- */
+    .topbar {
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .topbar img { width: 32px; height: 32px; border-radius: 8px; object-fit: cover; }
+    .topbar h1 { font-size: 17px; font-weight: 700; }
+    .print-btn {
+      margin-left: auto;
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      color: var(--text);
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      text-decoration: none;
+      padding: 14px 20px 0;
+    }
+    .back-link:hover { color: var(--text); }
+
+    .content {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 20px 20px 80px;
+    }
+
+    /* ---- TOC ---- */
+    .toc {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 40px;
+    }
+    .toc h2 { font-size: 14px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 12px; }
+    .toc ol { padding-left: 20px; }
+    .toc li { margin: 4px 0; }
+    .toc a { color: var(--accent); text-decoration: none; font-size: 14px; }
+    .toc a:hover { text-decoration: underline; }
+
+    /* ---- Section ---- */
+    section { margin-bottom: 52px; }
+    section h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-icon {
+      width: 36px; height: 36px;
+      background: var(--accent);
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    section .lead {
+      color: var(--muted);
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    h3 { font-size: 16px; font-weight: 700; margin: 24px 0 8px; color: var(--text); }
+
+    p { margin-bottom: 10px; }
+
+    ol, ul { padding-left: 20px; margin-bottom: 12px; }
+    li { margin: 4px 0; }
+
+    .tip {
+      background: var(--panel);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 10px 14px;
+      margin: 14px 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .tip strong { color: var(--text); }
+
+    /* ---- Screen mockups ---- */
+    .screen {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin: 16px 0 24px;
+      font-size: 13px;
+    }
+    .screen-bar {
+      background: var(--panel-2);
+      border-bottom: 1px solid var(--line);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .screen-bar strong { color: var(--text); font-size: 14px; }
+    .screen-body { padding: 14px; }
+
+    .mock-subnav {
+      display: flex;
+      gap: 4px;
+      background: var(--panel-2);
+      padding: 6px 10px;
+      border-bottom: 1px solid var(--line);
+      flex-wrap: wrap;
+    }
+    .mock-tab {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .mock-tab.active {
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .mock-card {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+    }
+    .mock-card-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .mock-card-title { font-weight: 700; font-size: 14px; flex: 1; }
+    .mock-card-meta { color: var(--muted); font-size: 12px; }
+    .btn-mock {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 12px;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .btn-mock.accent { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn-mock.danger { color: #f44; border-color: #f44; }
+
+    .mock-chip {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+    .dot-pink { background: #e8156a; }
+    .dot-blue { background: #4fc3f7; }
+    .dot-green { background: #66bb6a; }
+    .dot-orange { background: #ffa726; }
+
+    .muted { color: var(--muted); }
+    .accent-text { color: var(--accent); }
+
+    .stars { color: #f5c842; font-size: 13px; letter-spacing: 1px; }
+
+    hr { border: none; border-top: 1px solid var(--line); margin: 32px 0; }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+    @media (max-width: 500px) { .two-col { grid-template-columns: 1fr; } }
+
+    .legend-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <img src="logo.jpeg" alt="Logo" />
+  <h1>Bedienungsanleitung</h1>
+  <button class="print-btn" onclick="window.print()">🖨 Als PDF drucken</button>
+</div>
+
+<a class="back-link" href="/">← Zurück zur App</a>
+
+<div class="content">
+
+  <div class="toc">
+    <h2>Inhalt</h2>
+    <ol>
+      <li><a href="#kalender">Kalender</a></li>
+      <li><a href="#songs">Songs &amp; Aufnahmen</a></li>
+      <li><a href="#setlisten">Setlisten</a></li>
+      <li><a href="#todos">Todos</a></li>
+      <li><a href="#finanzen">Finanzen</a></li>
+      <li><a href="#account">Account &amp; Admin</a></li>
+      <li><a href="#push">Benachrichtigungen</a></li>
+    </ol>
+  </div>
+
+  <!-- ══════════════════════════ KALENDER ══════════════════════════ -->
+  <section id="kalender">
+    <h2><span class="section-icon">📅</span> Kalender</h2>
+    <p class="lead">Im Kalender seht ihr alle geplanten Termine, könnt eure Verfügbarkeit eintragen und auf einen Blick sehen, wann alle Zeit haben.</p>
+
+    <div class="screen">
+      <div class="screen-bar">
+        <strong>Kalender</strong>
+        <span style="margin-left:auto">◀ Juni 2026 ▶</span>
+      </div>
+      <div class="screen-body">
+        <div class="legend-row">
+          <div class="legend-item"><span class="mock-chip" style="background:#1b3a2a;color:#66bb6a;">frei</span> Ich bin da</div>
+          <div class="legend-item"><span class="mock-chip" style="background:#3a2e00;color:#ffa726;">vielleicht</span> Eventuell</div>
+          <div class="legend-item"><span class="mock-chip" style="background:#3a1a1a;color:#f44;">keine Zeit</span> Absage</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;">
+          <div class="muted" style="font-size:11px;">Mo</div><div class="muted" style="font-size:11px;">Di</div><div class="muted" style="font-size:11px;">Mi</div><div class="muted" style="font-size:11px;">Do</div><div class="muted" style="font-size:11px;">Fr</div><div class="muted" style="font-size:11px;">Sa</div><div class="muted" style="font-size:11px;">So</div>
+          <div style="padding:6px;border-radius:6px;background:var(--panel-2);font-size:13px;">1<br><span class="dot dot-pink" style="display:inline-block;width:5px;height:5px;"></span></div>
+          <div style="padding:6px;border-radius:6px;background:#1b3a2a;font-size:13px;">2<br><span style="font-size:9px;color:#66bb6a;">✓✓✓</span></div>
+          <div style="padding:6px;border-radius:6px;background:var(--panel-2);font-size:13px;">3</div>
+          <div style="padding:6px;border-radius:6px;border:2px solid var(--accent);font-size:13px;font-weight:700;">4<br><span style="font-size:9px;color:var(--accent);">Probe</span></div>
+          <div style="padding:6px;border-radius:6px;background:var(--panel-2);font-size:13px;">5</div>
+          <div style="padding:6px;border-radius:6px;background:var(--panel-2);font-size:13px;">6</div>
+          <div style="padding:6px;border-radius:6px;background:var(--panel-2);font-size:13px;">7</div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Verfügbarkeit eintragen</h3>
+    <ol>
+      <li>Auf einen <strong>Tag im Kalender tippen</strong></li>
+      <li>Es erscheint ein Auswahl-Dialog: <strong>Frei / Vielleicht / Keine Zeit</strong></li>
+      <li>Optional eine <strong>Notiz</strong> hinzufügen</li>
+      <li>Mit <strong>Speichern</strong> bestätigen</li>
+    </ol>
+    <div class="tip">💡 <strong>Grüne Tage</strong> (mit Haken-Symbol) bedeuten: alle Mitglieder sind an dem Tag frei – ideal für Proben oder Konzerte.</div>
+
+    <h3>Termine anlegen (nur Admins)</h3>
+    <ol>
+      <li>Auf einen <strong>Termin-Tag tippen</strong> (pinkes Ausrufezeichen am Datum)</li>
+      <li>Im Dialog auf <strong>+ Termin</strong> klicken</li>
+      <li><strong>Name, Datum und optional Uhrzeit</strong> eingeben</li>
+      <li>Speichern – der Termin erscheint im Kalender und im ICS-Feed</li>
+    </ol>
+  </section>
+
+  <hr />
+
+  <!-- ══════════════════════════ SONGS ══════════════════════════ -->
+  <section id="songs">
+    <h2><span class="section-icon">🎵</span> Songs &amp; Aufnahmen</h2>
+    <p class="lead">Hier verwaltet ihr alle Songs der Band – unterteilt in eigene Songs, Cover, Songs in Arbeit und Ideen. Jeder Song kann bewertet und mit Aufnahmen versehen werden.</p>
+
+    <div class="screen">
+      <div class="mock-subnav">
+        <span class="mock-tab active">Eigene 5</span>
+        <span class="mock-tab">Cover 3</span>
+        <span class="mock-tab">In Arbeit 2</span>
+        <span class="mock-tab">Ideen 4</span>
+      </div>
+      <div class="screen-body">
+        <div class="mock-card">
+          <div class="mock-card-row">
+            <span class="mock-card-title">Burning Sky</span>
+            <span class="stars">★★★★☆</span>
+            <span class="btn-mock">✏</span>
+            <span class="btn-mock danger">×</span>
+          </div>
+          <div class="mock-card-meta">3 Dateien · ⏱ ~3:42</div>
+        </div>
+        <div class="mock-card" style="border-color:var(--accent)">
+          <div class="mock-card-row">
+            <span style="color:var(--accent);font-size:16px;">›</span>
+            <span class="mock-card-title">Dead End Highway</span>
+            <span class="btn-mock">✏</span>
+            <span class="btn-mock danger">×</span>
+          </div>
+          <div class="mock-card-meta" style="margin-top:6px;">
+            <span style="color:var(--muted)">2 Dateien</span> · ⏱ ~4:15
+          </div>
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line);">
+            <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+              <span class="muted" style="font-size:12px;">Aufnahmen</span>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center;padding:8px;background:var(--panel);border-radius:8px;font-size:12px;">
+              <span>probe_230612.mp3</span>
+              <span class="muted">2:38 · 4.1 MB</span>
+              <span class="btn-mock">🔗</span>
+              <span class="btn-mock">🔔</span>
+              <span class="btn-mock">✏</span>
+              <span class="btn-mock danger">×</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Song hinzufügen</h3>
+    <ol>
+      <li>Oben rechts auf <strong>+ Song</strong> tippen</li>
+      <li><strong>Titel</strong> eingeben</li>
+      <li><strong>Kategorie</strong> wählen: Eigener Song · Cover · In Arbeit · Idee</li>
+      <li>Optional eine <strong>Notiz</strong> hinzufügen</li>
+      <li>Mit <strong>Hinzufügen</strong> bestätigen</li>
+    </ol>
+
+    <h3>Aufnahme hochladen</h3>
+    <ol>
+      <li>Song-Karte aufklappen (antippen)</li>
+      <li>Im Bereich <em>Aufnahmen</em> auf <strong>↑ Hochladen</strong> tippen</li>
+      <li>Audio- oder Videodatei auswählen (MP3, M4A, WAV, MP4 …)</li>
+      <li>Die Datei erscheint mit Dauer und Dateigröße in der Liste</li>
+    </ol>
+    <div class="tip">🎙 <strong>Direkt aufnehmen:</strong> Auf <strong>🎙 Aufnehmen</strong> tippen, um das Mikrofon des Geräts zu nutzen. Nach der Aufnahme kann sie angehört und hochgeladen oder verworfen werden.</div>
+
+    <h3>Song bewerten</h3>
+    <p>In jeder aufgeklappten Song-Karte gibt es Stern-Buttons (1–5). Einfach die gewünschte Bewertung tippen und optional einen Kommentar schreiben, dann <strong>Speichern</strong>.</p>
+    <p>Die Durchschnittsbewertung aller Mitglieder wird im Karten-Header angezeigt.</p>
+
+    <h3>Aufnahmen bewerten</h3>
+    <p>Jede einzelne Aufnahme kann ebenfalls bewertet werden. Das ist wichtig für das <strong>Setlisten-Abspielen</strong> – dort wird automatisch die am besten bewertete Aufnahme pro Song gewählt.</p>
+
+    <h3>Link zu einer Aufnahme teilen (🔗)</h3>
+    <ol>
+      <li>Song aufklappen → bei der gewünschten Aufnahme auf <strong>🔗</strong> tippen</li>
+      <li>Der Link wird in die Zwischenablage kopiert</li>
+      <li>Link z.B. via WhatsApp teilen</li>
+      <li>Wer auf den Link klickt, landet direkt bei der Song-Karte (wenn die App installiert ist, öffnet sie direkt in der App)</li>
+    </ol>
+
+    <h3>Mitglieder per Push benachrichtigen (🔔)</h3>
+    <ol>
+      <li>Bei einer Aufnahme auf <strong>🔔</strong> tippen</li>
+      <li>Alle anderen Mitglieder erhalten eine Push-Nachricht mit dem Hinweis, die Aufnahme anzuhören und zu bewerten</li>
+      <li>Ein Klick auf die Benachrichtigung öffnet direkt die richtige Song-Karte</li>
+    </ol>
+  </section>
+
+  <hr />
+
+  <!-- ══════════════════════════ SETLISTEN ══════════════════════════ -->
+  <section id="setlisten">
+    <h2><span class="section-icon">📋</span> Setlisten</h2>
+    <p class="lead">Erstellt und verwaltet Setlisten für Konzerte oder Proben. Songs können per Drag &amp; Drop sortiert werden. Die Setliste kann als PDF exportiert und als Playlist abgespielt werden.</p>
+
+    <div class="screen">
+      <div class="screen-body">
+        <div class="mock-card">
+          <div class="mock-card-row">
+            <span class="mock-card-title">Konzert Mühldorf</span>
+            <span class="btn-mock">✏</span>
+            <span class="btn-mock accent">▶</span>
+            <span class="btn-mock">⬇</span>
+            <span class="btn-mock">⧉</span>
+            <span class="btn-mock danger">×</span>
+          </div>
+          <div class="mock-card-meta">08.08.2026 · 9 Songs · ⏱ ~42 Min · ★★★★☆</div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Setliste erstellen</h3>
+    <ol>
+      <li>Auf <strong>+ Setliste</strong> tippen</li>
+      <li><strong>Name</strong> eingeben (z.B. "Konzert Mühldorf")</li>
+      <li>Optional: <strong>Datum</strong> und <strong>Notizen</strong> hinzufügen</li>
+      <li>Mit <strong>Erstellen</strong> bestätigen</li>
+    </ol>
+
+    <h3>Songs hinzufügen</h3>
+    <ol>
+      <li>Setliste aufklappen</li>
+      <li>Unten im Bereich <em>Songs</em> auf <strong>+ Song hinzufügen</strong> tippen</li>
+      <li>Song aus der Liste auswählen</li>
+      <li>Reihenfolge per <strong>Drag &amp; Drop</strong> (☰-Symbol) anpassen</li>
+    </ol>
+    <div class="tip">🪄 <strong>Autofill:</strong> Die Setliste kann automatisch mit den am besten bewerteten Songs befüllt werden – entweder nach Anzahl oder nach Gesamtdauer. Einfach im aufgeklappten Bereich auf <strong>Autofill</strong> tippen.</div>
+
+    <h3>Setliste abspielen (▶)</h3>
+    <ol>
+      <li>Im Setlisten-Header auf <strong>▶</strong> tippen</li>
+      <li>Ein Player öffnet sich von unten</li>
+      <li>Pro Song wird automatisch die <strong>am besten bewertete Aufnahme</strong> gewählt</li>
+      <li>Songs ohne Aufnahme werden übersprungen</li>
+      <li>Mit <strong>⏮ / ⏭</strong> zwischen Songs wechseln</li>
+      <li>Am Ende eines Songs wird automatisch der nächste gestartet</li>
+    </ol>
+
+    <div class="screen">
+      <div class="screen-bar"><strong>🎵 Konzert Mühldorf</strong></div>
+      <div class="screen-body">
+        <div style="text-align:center;padding:10px 0;">
+          <div style="font-size:18px;font-weight:700;margin-bottom:4px;">Burning Sky</div>
+          <div class="muted" style="font-size:13px;">Song 3 von 7</div>
+        </div>
+        <div style="background:var(--panel-2);border-radius:8px;padding:8px 12px;margin:10px 0;font-size:12px;color:var(--muted);">
+          ▶ ──────────────○──────────── 2:14 / 4:30
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
+          <span class="btn-mock">⏮ Zurück</span>
+          <span class="btn-mock">Weiter ⏭</span>
+        </div>
+        <div class="muted" style="font-size:12px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Playlist</div>
+        <div style="font-size:13px;">
+          <div style="padding:6px;display:flex;gap:8px;"><span class="muted">1.</span> Dead End Highway ✓</div>
+          <div style="padding:6px;display:flex;gap:8px;"><span class="muted">2.</span> Lost Signal ✓</div>
+          <div style="padding:6px;display:flex;gap:8px;color:var(--accent);font-weight:700;background:var(--panel-2);border-radius:6px;"><span>3.</span> Burning Sky ▶</div>
+          <div style="padding:6px;display:flex;gap:8px;"><span class="muted">4.</span> Midnight Run</div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Als PDF exportieren (⬇)</h3>
+    <ol>
+      <li>Im Setlisten-Header auf <strong>⬇</strong> tippen</li>
+      <li>Ein PDF wird direkt im Browser generiert und kann gespeichert oder gedruckt werden</li>
+      <li>Das PDF enthält alle Songs in der richtigen Reihenfolge mit Dauer-Angaben</li>
+    </ol>
+
+    <h3>Setliste kopieren (⧉)</h3>
+    <p>Erstellt eine exakte Kopie der Setliste mit dem Zusatz "(Kopie)" – nützlich um Varianten zu erstellen.</p>
+  </section>
+
+  <hr />
+
+  <!-- ══════════════════════════ TODOS ══════════════════════════ -->
+  <section id="todos">
+    <h2><span class="section-icon">✅</span> Todos</h2>
+    <p class="lead">Das Todo-Board funktioniert wie ein Kanban-Board: Aufgaben wandern von "Offen" über "In Bearbeitung" bis "Erledigt". Aufgaben können Mitgliedern zugewiesen werden.</p>
+
+    <div class="screen">
+      <div class="screen-body" style="display:flex;gap:10px;overflow-x:auto;">
+        <div style="min-width:140px;">
+          <div style="font-weight:700;font-size:13px;margin-bottom:8px;">Offen</div>
+          <div class="mock-card" style="padding:10px;">
+            <div style="font-weight:700;font-size:13px;">Verstärker reparieren</div>
+            <div class="muted" style="font-size:11px;margin-top:4px;">📅 30.06.</div>
+            <div style="margin-top:4px;display:flex;gap:3px;">
+              <span class="dot dot-pink"></span>
+              <span class="dot dot-blue"></span>
+            </div>
+          </div>
+        </div>
+        <div style="min-width:140px;">
+          <div style="font-weight:700;font-size:13px;margin-bottom:8px;">In Bearbeitung</div>
+          <div class="mock-card" style="padding:10px;">
+            <div style="font-weight:700;font-size:13px;">Website aktualisieren</div>
+            <div style="margin-top:4px;"><span class="dot dot-green"></span></div>
+          </div>
+        </div>
+        <div style="min-width:140px;">
+          <div style="font-weight:700;font-size:13px;margin-bottom:8px;">Erledigt</div>
+          <div class="mock-card" style="padding:10px;opacity:.6;">
+            <div style="font-weight:700;font-size:13px;">Proberaum gebucht</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Aufgabe erstellen</h3>
+    <ol>
+      <li>Oben rechts auf <strong>+ Aufgabe</strong> tippen</li>
+      <li><strong>Titel</strong> und optionale <strong>Beschreibung</strong> eingeben</li>
+      <li>Optional <strong>Fälligkeitsdatum</strong> setzen</li>
+      <li>Mit <strong>Erstellen</strong> bestätigen</li>
+    </ol>
+
+    <h3>Aufgabe bearbeiten</h3>
+    <ol>
+      <li>Auf eine Aufgaben-Karte tippen – ein Detailfenster öffnet sich</li>
+      <li>Hier können <strong>Mitglieder zugewiesen</strong>, <strong>Checklisten</strong> hinzugefügt und die <strong>Spalte gewechselt</strong> werden</li>
+      <li>Aufgaben können per <strong>Drag &amp; Drop</strong> zwischen den Spalten verschoben werden</li>
+    </ol>
+
+    <h3>Checkliste hinzufügen</h3>
+    <ol>
+      <li>Aufgabe öffnen → <strong>+ Punkt hinzufügen</strong> im Checklisten-Bereich</li>
+      <li>Punkte können abgehakt werden – der Fortschritt wird in der Karten-Vorschau angezeigt</li>
+    </ol>
+  </section>
+
+  <hr />
+
+  <!-- ══════════════════════════ FINANZEN ══════════════════════════ -->
+  <section id="finanzen">
+    <h2><span class="section-icon">💰</span> Finanzen</h2>
+    <p class="lead">Verwaltet Einnahmen und Ausgaben pro Event (Konzert, Probe, Fahrt etc.). Ausgaben können mit Kassenbon-Foto belegt werden. Überschüsse werden mit Konfetti gefeiert.</p>
+
+    <div class="screen">
+      <div class="screen-body">
+        <div class="mock-card">
+          <div class="mock-card-row">
+            <span class="mock-card-title">Konzert Rosenheim</span>
+            <span class="btn-mock danger">×</span>
+          </div>
+          <div class="mock-card-meta">08.08.2026 · Einnahmen: €500 · Ausgaben: €120 · <span style="color:#66bb6a;font-weight:700;">+ €380</span></div>
+        </div>
+        <div class="mock-card">
+          <div class="mock-card-row">
+            <span class="mock-card-title">Proberaummiete Juni</span>
+            <span class="btn-mock danger">×</span>
+          </div>
+          <div class="mock-card-meta">Einnahmen: €0 · Ausgaben: €240 · <span style="color:#f44;font-weight:700;">− €240</span></div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Neues Finanz-Event anlegen (nur Admins)</h3>
+    <ol>
+      <li>Auf <strong>+ Event</strong> tippen</li>
+      <li><strong>Name</strong> (z.B. "Konzert Rosenheim"), <strong>Datum</strong> und optionale Beschreibung eingeben</li>
+      <li>Bandkasse-Anteil (%) festlegen</li>
+      <li>Mit <strong>Erstellen</strong> bestätigen</li>
+    </ol>
+
+    <h3>Ausgabe erfassen</h3>
+    <ol>
+      <li>Finanz-Event aufklappen</li>
+      <li>Auf <strong>+ Ausgabe</strong> tippen</li>
+      <li><strong>Betrag</strong> und <strong>Beschreibung</strong> eingeben</li>
+      <li>Optional: <strong>Kassenbon-Foto</strong> hochladen</li>
+      <li>Mit <strong>Speichern</strong> bestätigen</li>
+    </ol>
+
+    <h3>Einnahme erfassen</h3>
+    <ol>
+      <li>Finanz-Event aufklappen</li>
+      <li>Auf <strong>+ Einnahme</strong> tippen</li>
+      <li><strong>Betrag</strong> und optionale Beschreibung eingeben</li>
+      <li>Mit <strong>Speichern</strong> bestätigen</li>
+    </ol>
+
+    <div class="tip">🎊 <strong>Konfetti-Regen:</strong> Wenn Einnahmen die Ausgaben übersteigen, gibt es zur Belohnung Konfetti und Sound!</div>
+  </section>
+
+  <hr />
+
+  <!-- ══════════════════════════ ACCOUNT ══════════════════════════ -->
+  <section id="account">
+    <h2><span class="section-icon">👤</span> Account &amp; Admin</h2>
+    <p class="lead">Jedes Mitglied hat einen eigenen Account mit Farbe und Name. Admins können weitere Mitglieder anlegen und verwalten.</p>
+
+    <h3>Mein Account</h3>
+    <ul>
+      <li><strong>Name:</strong> Bandname (für alle sichtbar)</li>
+      <li><strong>Echter Name:</strong> Nur für dich selbst sichtbar – du siehst deinen eigenen Namen, andere sehen deinen Bandnamen</li>
+      <li><strong>Farbe:</strong> Persönliche Farbe zur Kennzeichnung im Kalender und überall in der App</li>
+    </ul>
+
+    <h3>Mitglied anlegen (nur Admins)</h3>
+    <ol>
+      <li>Im Account-Bereich auf <strong>+ Mitglied</strong> tippen</li>
+      <li><strong>Name</strong> und <strong>Passwort</strong> eingeben, <strong>Farbe</strong> wählen</li>
+      <li>Mit <strong>Hinzufügen</strong> bestätigen</li>
+      <li>Das neue Mitglied kann sich sofort einloggen</li>
+    </ol>
+
+  </section>
+
+  <hr />
+
+  <!-- ══════════════════════════ PUSH ══════════════════════════ -->
+  <section id="push">
+    <h2><span class="section-icon">🔔</span> Benachrichtigungen</h2>
+    <p class="lead">Die App kann Push-Benachrichtigungen schicken – z.B. wenn eine neue Aufnahme hochgeladen wurde. Benachrichtigungen funktionieren auch wenn die App gerade nicht offen ist.</p>
+
+    <h3>Benachrichtigungen aktivieren</h3>
+    <ol>
+      <li>Beim ersten Besuch erscheint ein pinker Banner am unteren Bildschirmrand</li>
+      <li>Auf <strong>Aktivieren</strong> tippen und die Browser-Anfrage bestätigen</li>
+      <li>Alternativ: In der App auf das <strong>🔔-Symbol</strong> in der Kopfzeile tippen</li>
+    </ol>
+
+    <div class="tip">📱 <strong>Als App installieren (Android):</strong> In Chrome auf <strong>⋮ → App installieren</strong> tippen. Danach erscheint die App auf dem Homescreen und öffnet sich ohne Browser-Rahmen.</div>
+
+    <div class="tip">📱 <strong>Als App installieren (iPhone):</strong> In Safari auf <strong>Teilen → Zum Home-Bildschirm</strong> tippen. Benachrichtigungen funktionieren auf iOS nur wenn die App über Safari auf iOS 16.4+ installiert wurde.</div>
+
+    <h3>Wann kommen Benachrichtigungen?</h3>
+    <ul>
+      <li>Wenn jemand eine Aufnahme hochlädt und auf <strong>🔔</strong> tippt</li>
+      <li>Die Benachrichtigung enthält Songname und Uploader</li>
+      <li>Klick auf die Benachrichtigung → App öffnet direkt die Song-Karte</li>
+    </ul>
+  </section>
+
+  <hr />
+
+  <div style="text-align:center;color:var(--muted);font-size:12px;padding:20px 0;">
+    The Dead Notes App · Stand Juni 2026
+  </div>
+
+</div>
+
+</body>
+</html>

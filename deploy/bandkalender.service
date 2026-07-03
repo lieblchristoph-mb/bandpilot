@@ -1,0 +1,16 @@
+[Unit]
+Description=The Dead Notes App
+After=network.target
+
+[Service]
+Type=simple
+User=bandkalender
+WorkingDirectory=/opt/bandkalender
+ExecStart=/opt/bandkalender/BandKalender
+Restart=always
+RestartSec=5
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=ASPNETCORE_URLS=http://localhost:5000
+
+[Install]
+WantedBy=multi-user.target

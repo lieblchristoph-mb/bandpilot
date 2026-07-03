@@ -1,0 +1,24 @@
+namespace BandKalender;
+
+record LoginDto(string? Name, string? Password);
+record BandEventDto(string? Date, string? Note, string? Time);
+record MemberDto(string? Name, string? Color, string? Password);
+record AvailabilityDto(int MemberId, string Date, string Status, string? Note);
+record SongDto(string? Title, string? Notes, string? Category = "own");
+record RatingDto(int Stars, string? Note);
+record SetlistDto(string? Name, string? ConcertDate, string? Notes);
+record SetlistSongDto(int SongId);
+record OrderDto(List<int> EntryIds);
+record AutofillDto(int? Count, double? TargetMinutes, int CoverCount = 0);
+record PushSubDto(string Endpoint, string P256dh, string Auth);
+record FileRenameDto(string? OriginalName);
+record TodoColumnDto(string? Name);
+record TodoCardCreateDto(int ColumnId, string? Title);
+record TodoCardUpdateDto(string? Title, string? Description, int? ColumnId, string? DueDate);
+record AssigneesDto(List<int>? MemberIds);
+record CheckItemDto(string? Text);
+record CheckItemUpdateDto(string? Text, bool? IsDone);
+record FinanceEventDto(string? Name, string? Date, string? Description);
+record FinanceIncomeDto(decimal Amount, string? Description);
+record BandkasseDto(decimal Amount);
+record MemberAdminUpdateDto(string? Name, string? Color, string? Password, bool IsAdmin, string? DisplayName = null);

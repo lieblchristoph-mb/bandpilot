@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <title>Todos – The Dead Notes App</title>
+  <script>(function(){var x=new XMLHttpRequest();x.open('GET','/version.txt?t='+Date.now(),true);x.onreadystatechange=function(){if(x.readyState===4&&x.status===200){var v=x.responseText.trim();if(v&&v!==localStorage.getItem('_bv')){localStorage.setItem('_bv',v);location.replace(location.pathname+'?_r='+v+'&_t='+Date.now());}}};x.send();if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").then(function(r){r.update();});navigator.serviceWorker.addEventListener("message",function(e){if(e.data&&e.data.type==="sw-updated")location.reload();});}})();</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=__BUILD__" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+</head>
+<body>
+  <div class="grain"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <img src="logo.jpeg" class="brand-logo" alt="Logo" />
+      <h1>The Dead Notes App</h1>
+    </div>
+    <div class="who">
+      <span id="userDisplay" class="user-display" hidden></span>
+    </div>
+  </header>
+
+  <nav class="subnav">
+    <a href="/" class="subnav-link" data-label="Kalender">Kalender</a>
+    <a href="/songs.html" class="subnav-link" data-label="Songs">Songs</a>
+    <a href="/setlists.html" class="subnav-link" data-label="Sets">Setlisten</a>
+    <a href="/todo.html" class="subnav-link active" data-label="Todos">Todos</a>
+    <a href="/finance.html" class="subnav-link" data-label="Finanzen">Finanzen</a>
+    <a href="/admin.html" class="subnav-link" data-label="Account" id="adminNavLink">Account</a>
+  </nav>
+
+  <main>
+    <div id="todoTabs" class="song-tabs"></div>
+    <div id="todoColActions"></div>
+    <div id="todoCards" class="card-list"></div>
+  </main>
+
+  <!-- Spalte hinzufügen -->
+  <div class="modal" id="addColModal" hidden>
+    <div class="modal-box">
+      <h3>Neue Spalte</h3>
+      <input id="newColName" type="text" placeholder="z.B. Auf Eis" maxlength="40" />
+      <div class="modal-actions">
+        <button id="cancelAddCol" class="ghost">Abbrechen</button>
+        <button id="saveAddCol" class="primary">Erstellen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Karte hinzufügen -->
+  <div class="modal" id="addCardModal" hidden>
+    <div class="modal-box">
+      <h3>Neue Karte</h3>
+      <input id="newCardTitle" type="text" placeholder="Titel" maxlength="100" />
+      <div id="newCardAssignees" class="assignees-row" style="margin-top:4px;min-height:36px;"></div>
+      <input id="newCardDueDate" type="date" style="background:var(--panel-2);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-family:inherit;font-size:15px;outline:none;" />
+      <div class="modal-actions">
+        <button id="cancelAddCard" class="ghost">Abbrechen</button>
+        <button id="saveAddCard" class="primary">Erstellen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Karten-Detail Vollbild -->
+  <div class="card-detail-overlay" id="cardDetailOverlay" hidden>
+    <div class="card-detail-header">
+      <button class="ghost" onclick="closeCardDetail()">← Zurück</button>
+      <button class="ghost danger" id="deleteCardBtn">Löschen</button>
+    </div>
+    <div id="cardDetailBody"></div>
+  </div>
+
+  <div class="nav-spinner-overlay" id="navSpinner"><div class="nav-spinner-ring"></div></div>
+  <script>
+    document.querySelectorAll(".subnav-link:not(.active)").forEach(a => {
+      a.addEventListener("click", () => document.getElementById("navSpinner").classList.add("visible"));
+    });
+  </script>
+  <script src="todo.js?v=__BUILD__"></script>
+</body>
+</html>

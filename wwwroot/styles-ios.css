@@ -1,0 +1,180 @@
+/* iOS HIG overlay — nach styles.css einbinden zum Überschreiben */
+
+/* Abgerundete Ecken wie iOS */
+:root {
+  --radius: 12px;
+}
+
+/* System-Font statt DM Sans */
+html, body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Topbar: safe area für Notch / Dynamic Island */
+.topbar {
+  padding-top: calc(18px + env(safe-area-inset-top, 0px));
+  padding-left: max(clamp(16px, 4vw, 48px), env(safe-area-inset-left, 0px));
+  padding-right: max(clamp(16px, 4vw, 48px), env(safe-area-inset-right, 0px));
+}
+
+/* ── Bottom Tab Bar ─────────────────────────────────────────── */
+.subnav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: auto;
+  z-index: 200;
+  border-bottom: none;
+  border-top: 0.5px solid var(--line);
+  padding: 0;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  display: flex;
+  justify-content: space-around;
+  gap: 0;
+  height: auto;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.subnav-link {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 10px 4px;
+  min-height: 49px;
+  border-bottom: none;
+  margin-bottom: 0;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  text-align: center;
+}
+
+/* Tab-Icons */
+.subnav-link[href="/"]::before,
+.subnav-link[href="/index.html"]::before { content: "📅"; font-size: 22px; line-height: 1; display: block; }
+.subnav-link[href="/songs.html"]::before  { content: "🎸"; font-size: 22px; line-height: 1; display: block; }
+.subnav-link[href="/setlists.html"]::before { content: "📋"; font-size: 22px; line-height: 1; display: block; }
+.subnav-link[href="/todo.html"]::before   { content: "✅"; font-size: 22px; line-height: 1; display: block; }
+.subnav-link[href="/admin.html"]::before  { content: "⚙️"; font-size: 22px; line-height: 1; display: block; }
+
+.subnav-link.active {
+  color: var(--accent);
+  border-bottom-color: transparent;
+}
+
+/* Main: Platz für die Tab Bar unten */
+main {
+  padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px) + 20px);
+}
+
+.card-detail-content {
+  padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+}
+
+/* ── iOS Bottom Sheet Modals (auf kleinen Screens) ──────────── */
+@media (max-width: 640px) {
+  .modal {
+    align-items: flex-end;
+    padding: 0;
+    padding-top: 60px;
+  }
+  .modal-box {
+    border-radius: 20px 20px 0 0;
+    max-width: 100%;
+    width: 100%;
+    padding: 24px 20px;
+    padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* ── Abgerundete Ecken ──────────────────────────────────────── */
+.calendar-card, .members-card { border-radius: 16px; }
+.item-card { border-radius: 16px; }
+.item-card-header:hover { border-radius: 16px 16px 0 0; }
+.day { border-radius: 10px; }
+.ghost, .primary { border-radius: 12px; }
+.login-box { border-radius: 20px; }
+.brand-logo { border-radius: 10px; }
+.login-logo { border-radius: 18px; }
+input, select, textarea { border-radius: 10px; }
+.chip { border-radius: 6px; }
+.todo-card { border-radius: 16px; }
+.recorder-active { border-radius: 14px; }
+
+/* ── Dynamische Schriftgrößen (Accessibility) ───────────────── */
+.topbar h1        { font-size: clamp(20px, 5vw, 28px); }
+.page-header h2   { font-size: clamp(20px, 5vw, 28px); }
+.item-card-title  { font-size: clamp(15px, 4vw, 17px); }
+.cal-nav h2       { font-size: clamp(18px, 4vw, 26px); }
+.todo-card-title  { font-size: clamp(15px, 4vw, 17px); }
+
+/* ── Smooth scrolling ───────────────────────────────────────── */
+main, .modal, .card-detail-overlay {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* ── Light Mode (Dark Mode wird bereits unterstützt) ─────────── */
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f2f2f7;
+    --panel: #ffffff;
+    --panel-2: #f2f2f7;
+    --line: #d1d1d6;
+    --text: #1c1c1e;
+    --muted: #8e8e93;
+    --accent-soft: rgba(232, 21, 106, 0.08);
+  }
+
+  body {
+    background: var(--bg);
+  }
+
+  body::after {
+    display: none;
+  }
+
+  .grain { opacity: 0.015; }
+
+  .topbar {
+    background: rgba(242, 242, 247, 0.88);
+    border-bottom-color: var(--line);
+  }
+
+  .subnav {
+    background: rgba(242, 242, 247, 0.92);
+    border-top-color: var(--line);
+  }
+
+  .day {
+    background: #ffffff;
+    border-color: var(--line);
+  }
+
+  .day.empty { background: transparent; }
+
+  .item-card, .calendar-card, .members-card {
+    background: #ffffff;
+  }
+
+  .item-card-header:hover { background: var(--panel-2); }
+
+  .modal-box, .login-box {
+    background: #ffffff;
+    border-color: var(--line);
+  }
+
+  .todo-card { background: #ffffff; }
+
+  .setlist-song-item, .file-item {
+    background: #ffffff;
+    border-color: var(--line);
+  }
+}

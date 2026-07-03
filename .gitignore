@@ -1,0 +1,19 @@
+# Build output
+bin/
+obj/
+publish/
+
+# Database & uploads (contain user data)
+bandkalender.db
+bandkalender.db-shm
+bandkalender.db-wal
+wwwroot/uploads/
+
+# macOS
+.DS_Store
+
+# IDE
+.vs/
+*.user
+.vscode/
+.idea/
