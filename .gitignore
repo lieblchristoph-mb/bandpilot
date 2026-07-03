@@ -17,3 +17,4 @@ wwwroot/uploads/
 *.user
 .vscode/
 .idea/
+.claude/
