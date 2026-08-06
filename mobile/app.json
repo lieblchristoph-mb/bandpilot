@@ -32,6 +32,9 @@
         "projectId": "494ba2f4-d09b-44fe-8aec-73c18e887dd5"
       }
     },
-    "owner": "tofflingers-team"
+    "owner": "tofflingers-team",
+    "plugins": [
+      "expo-asset"
+    ]
   }
 }
