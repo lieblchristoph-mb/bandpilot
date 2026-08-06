@@ -18,3 +18,8 @@ wwwroot/uploads/
 .vscode/
 .idea/
 .claude/
+
+# Expo / React Native
+mobile/node_modules/
+mobile/.expo/
+mobile/dist/
