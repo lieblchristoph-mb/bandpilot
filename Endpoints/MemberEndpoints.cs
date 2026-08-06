@@ -10,7 +10,7 @@ public static class MemberEndpoints
     public static IEndpointRouteBuilder MapMemberEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapGet("/api/members", async (AppDbContext db) =>
-            await db.Members.OrderBy(m => m.Id).Select(m => new { m.Id, m.Name, m.Color, m.IsAdmin }).ToListAsync());
+            await db.Members.OrderBy(m => m.Id).Select(m => new { m.Id, m.Name, m.Abbr, m.Color, m.IsAdmin }).ToListAsync());
 
         app.MapPost("/api/members", async (AppDbContext db, MemberDto dto) =>
         {

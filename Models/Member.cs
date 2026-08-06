@@ -10,4 +10,5 @@ public class Member
     public bool IsAdmin { get; set; }
     public string? LastLogin { get; set; }
     public string? DisplayName { get; set; }
+    public string? Abbr { get; set; }
 }

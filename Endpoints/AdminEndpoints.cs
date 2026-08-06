@@ -16,7 +16,7 @@ public static class AdminEndpoints
                 return Results.Json(new { error = "Nur Admins." }, statusCode: StatusCodes.Status403Forbidden);
 
             var users = await db.Members.OrderBy(m => m.Id)
-                .Select(m => new { m.Id, m.Name, m.DisplayName, m.Color, m.IsAdmin, m.LastLogin })
+                .Select(m => new { m.Id, m.Name, m.DisplayName, m.Abbr, m.Color, m.IsAdmin, m.LastLogin })
                 .ToListAsync();
             return Results.Ok(users);
         });
@@ -36,9 +36,10 @@ public static class AdminEndpoints
             if (!string.IsNullOrWhiteSpace(dto.Password)) member.PasswordHash = PasswordHelper.Hash(dto.Password);
             member.IsAdmin = dto.IsAdmin;
             member.DisplayName = string.IsNullOrWhiteSpace(dto.DisplayName) ? null : dto.DisplayName.Trim();
+            member.Abbr = string.IsNullOrWhiteSpace(dto.Abbr) ? null : dto.Abbr.Trim().ToUpper()[..Math.Min(3, dto.Abbr.Trim().Length)];
 
             await db.SaveChangesAsync();
-            return Results.Ok(new { member.Id, member.Name, member.DisplayName, member.Color, member.IsAdmin });
+            return Results.Ok(new { member.Id, member.Name, member.DisplayName, member.Abbr, member.Color, member.IsAdmin });
         });
 
         app.MapDelete("/api/admin/users/{id:int}", async (HttpContext ctx, AppDbContext db, int id) =>

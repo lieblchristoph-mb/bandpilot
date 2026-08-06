@@ -215,6 +215,7 @@ public static class DatabaseInitializer
         try { db.Database.ExecuteSqlRaw("ALTER TABLE FinanceEvents ADD COLUMN BandkasseAmount REAL NOT NULL DEFAULT 0"); } catch { }
         try { db.Database.ExecuteSqlRaw("ALTER TABLE BandEvents ADD COLUMN Time TEXT"); } catch { }
         try { db.Database.ExecuteSqlRaw("ALTER TABLE Members ADD COLUMN DisplayName TEXT"); } catch { }
+        try { db.Database.ExecuteSqlRaw("ALTER TABLE Members ADD COLUMN Abbr TEXT"); } catch { }
         // One-time: move real name to DisplayName, restore band alias as Name
         db.Database.ExecuteSqlRaw("UPDATE Members SET DisplayName = Name, Name = 'Toffl' WHERE Name = 'Christoph'"
         );

@@ -21,4 +21,4 @@ record CheckItemUpdateDto(string? Text, bool? IsDone);
 record FinanceEventDto(string? Name, string? Date, string? Description);
 record FinanceIncomeDto(decimal Amount, string? Description);
 record BandkasseDto(decimal Amount);
-record MemberAdminUpdateDto(string? Name, string? Color, string? Password, bool IsAdmin, string? DisplayName = null);
+record MemberAdminUpdateDto(string? Name, string? Color, string? Password, bool IsAdmin, string? DisplayName = null, string? Abbr = null);
