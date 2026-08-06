@@ -134,6 +134,7 @@ function openEditModal(id) {
   editingMemberId = id;
   document.getElementById("editMemberName").value = u.name;
   document.getElementById("editMemberDisplayName").value = u.displayName || "";
+  document.getElementById("editMemberAbbr").value = u.abbr || "";
   document.getElementById("editMemberColor").value = u.color;
   document.getElementById("editMemberPassword").value = "";
   document.getElementById("editMemberIsAdmin").checked = u.isAdmin;
@@ -148,6 +149,7 @@ function closeEditModal() {
 async function saveEditMember() {
   const name = document.getElementById("editMemberName").value.trim();
   const displayName = document.getElementById("editMemberDisplayName").value.trim();
+  const abbr = document.getElementById("editMemberAbbr").value.trim().toUpperCase();
   const color = document.getElementById("editMemberColor").value;
   const password = document.getElementById("editMemberPassword").value;
   const isAdmin = document.getElementById("editMemberIsAdmin").checked;
@@ -155,7 +157,7 @@ async function saveEditMember() {
   try {
     const res = await api(`/api/admin/users/${editingMemberId}`, {
       method: "PUT",
-      body: JSON.stringify({ name, displayName: displayName || null, color, password: password || null, isAdmin })
+      body: JSON.stringify({ name, displayName: displayName || null, abbr: abbr || null, color, password: password || null, isAdmin })
     });
     if (!res.ok) { const e = await res.json().catch(() => ({})); alert(e?.error || "Fehler."); return; }
     closeEditModal();

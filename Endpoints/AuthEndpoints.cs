@@ -36,7 +36,7 @@ public static class AuthEndpoints
             var token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
             db.Sessions.Add(new Session { Token = token, MemberId = member.Id });
             await db.SaveChangesAsync();
-            return Results.Ok(new { token, id = member.Id, name = member.Name, displayName = member.DisplayName, color = member.Color, isAdmin = member.IsAdmin });
+            return Results.Ok(new { token, id = member.Id, name = member.Name, displayName = member.DisplayName, abbr = member.Abbr, color = member.Color, isAdmin = member.IsAdmin });
         });
 
         app.MapPost("/api/login", async (AppDbContext db, LoginDto dto) =>
@@ -49,7 +49,7 @@ public static class AuthEndpoints
             var token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
             db.Sessions.Add(new Session { Token = token, MemberId = member.Id });
             await db.SaveChangesAsync();
-            return Results.Ok(new { token, id = member.Id, name = member.Name, displayName = member.DisplayName, color = member.Color, isAdmin = member.IsAdmin });
+            return Results.Ok(new { token, id = member.Id, name = member.Name, displayName = member.DisplayName, abbr = member.Abbr, color = member.Color, isAdmin = member.IsAdmin });
         });
 
         app.MapPost("/api/logout", async (HttpContext ctx, AppDbContext db) =>
@@ -65,7 +65,7 @@ public static class AuthEndpoints
             var memberId = (int)ctx.Items["memberId"]!;
             var member = await db.Members.FindAsync(memberId);
             if (member is null) return Results.NotFound();
-            return Results.Ok(new { id = member.Id, name = member.Name, displayName = member.DisplayName, color = member.Color, isAdmin = member.IsAdmin });
+            return Results.Ok(new { id = member.Id, name = member.Name, displayName = member.DisplayName, abbr = member.Abbr, color = member.Color, isAdmin = member.IsAdmin });
         });
 
         return app;

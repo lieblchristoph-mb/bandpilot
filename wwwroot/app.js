@@ -72,7 +72,8 @@ const pad = (n) => String(n).padStart(2, "0");
 const ymd = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 const monthKey = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}`;
 
-function initialsOf(name) {
+function initialsOf(name, abbr) {
+  if (abbr) return abbr;
   return name.trim().slice(0, 2).toUpperCase();
 }
 
@@ -227,7 +228,7 @@ function renderCalendar() {
       dot.className = `dot ${entry.status}`;
       if (session && m.id === session.id) dot.classList.add("me");
       dot.title = `${m.name}: ${labelOf(entry.status)}${entry.note ? ' – ' + entry.note : ''}`;
-      dot.textContent = initialsOf(m.name);
+      dot.textContent = initialsOf(m.name, m.abbr);
       dots.appendChild(dot);
     }
     cell.appendChild(dots);
