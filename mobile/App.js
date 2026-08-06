@@ -11,6 +11,7 @@ const ACCENT = '#e8156a';
 export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [firstLoad, setFirstLoad] = useState(true);
   const webViewRef = useRef(null);
 
   const reload = () => {
@@ -28,8 +29,8 @@ export default function App() {
           ref={webViewRef}
           source={{ uri: APP_URL }}
           style={styles.webview}
-          onLoadStart={() => { setLoading(true); setError(false); }}
-          onLoadEnd={() => setLoading(false)}
+          onLoadStart={() => { if (firstLoad) { setLoading(true); setError(false); } }}
+          onLoadEnd={() => { setLoading(false); setFirstLoad(false); }}
           onError={() => { setLoading(false); setError(true); }}
           mediaPlaybackRequiresUserAction={false}
           allowsInlineMediaPlayback
@@ -41,7 +42,7 @@ export default function App() {
           cacheEnabled
         />
 
-        {loading && !error && (
+        {loading && !error && firstLoad && (
           <View style={styles.splash}>
             <Text style={styles.splashIcon}>🎸</Text>
             <Text style={styles.splashTitle}>BandPilot</Text>
