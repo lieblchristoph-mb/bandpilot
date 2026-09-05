@@ -188,9 +188,10 @@ function renderSongBody(song) {
       }).join("")}</div>`
     : "";
 
-  const filesHtml = detail.files.length === 0
+  const sortedFiles = [...detail.files].sort((a, b) => (b.avgRating ?? 0) - (a.avgRating ?? 0));
+  const filesHtml = sortedFiles.length === 0
     ? `<p style="color:var(--muted);font-size:13px;margin:8px 0;">Noch keine Dateien hochgeladen.</p>`
-    : `<ul class="file-list">${detail.files.map(f => renderFileItem(song.id, f)).join("")}</ul>`;
+    : `<ul class="file-list">${sortedFiles.map(f => renderFileItem(song.id, f)).join("")}</ul>`;
 
   return `
     ${song.notes ? `<p class="notes-text">${esc(song.notes)}</p>` : ""}
