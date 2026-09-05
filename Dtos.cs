@@ -23,3 +23,4 @@ record FinanceIncomeDto(decimal Amount, string? Description);
 record BandkasseDto(decimal Amount);
 record MemberAdminUpdateDto(string? Name, string? Color, string? Password, bool IsAdmin, string? DisplayName = null, string? Abbr = null);
 record FileMoveDto(int TargetSongId);
+record FileBpmDto(int Bpm);

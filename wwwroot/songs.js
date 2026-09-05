@@ -245,10 +245,16 @@ function renderFileItem(songId, f) {
     ? `<video controls src="/uploads/songs/${f.fileName}" style="width:100%;max-height:200px;border-radius:6px;margin-top:6px;"></video>`
     : `<audio controls src="/uploads/songs/${f.fileName}" style="width:100%;margin-top:6px;"></audio>`;
 
+  const isAudioFile = /\.(mp3|wav|m4a|ogg|webm)$/i.test(f.originalName ?? "");
+  const bpmPart = f.bpm
+    ? `${f.bpm} BPM`
+    : isAudioFile
+      ? `<button onclick="event.stopPropagation();remeasureBpm(${songId},${f.id},'${f.fileName}')" id="bpm-btn-${f.id}" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:11px;padding:0;font-family:inherit;" title="BPM ermitteln">BPM?</button>`
+      : null;
   const metaPreview = [
     f.durationSeconds ? fmtDuration(f.durationSeconds) : null,
     fmtSize(f.fileSize),
-    f.bpm ? `${f.bpm} BPM` : null,
+    bpmPart,
     f.ratingCount > 0 ? `⌀ ${f.avgRating.toFixed(1)}★` : null
   ].filter(Boolean).join(" · ");
 
@@ -493,6 +499,23 @@ function discardRecording(songId) {
   delete recState[songId];
   const ui = document.getElementById(`recorder-${songId}`);
   if (ui) { ui.hidden = true; ui.innerHTML = ""; }
+}
+
+async function remeasureBpm(songId, fileId, fileName) {
+  const btn = document.getElementById(`bpm-btn-${fileId}`);
+  if (btn) btn.textContent = "…";
+  try {
+    const res = await fetch(`/uploads/songs/${fileName}`);
+    const arrayBuffer = await res.arrayBuffer();
+    const bpm = await detectBpm(new File([arrayBuffer], fileName));
+    if (!bpm) { if (btn) btn.textContent = "BPM?"; return; }
+    await api(`/api/songs/${songId}/files/${fileId}/bpm`, {
+      method: "PATCH",
+      body: JSON.stringify({ bpm })
+    });
+    await loadSongDetails(songId);
+    renderSongs();
+  } catch { if (btn) btn.textContent = "BPM?"; }
 }
 
 async function detectBpm(file) {
