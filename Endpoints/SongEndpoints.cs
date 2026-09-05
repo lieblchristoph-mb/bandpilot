@@ -139,6 +139,17 @@ public static class SongEndpoints
             return Results.Ok(file);
         });
 
+        app.MapPatch("/api/songs/{id:int}/files/{fileId:int}/move", async (AppDbContext db, int id, int fileId, FileMoveDto dto) =>
+        {
+            var file = await db.SongFiles.FirstOrDefaultAsync(f => f.Id == fileId && f.SongId == id);
+            if (file is null) return Results.NotFound();
+            var targetExists = await db.Songs.AnyAsync(s => s.Id == dto.TargetSongId);
+            if (!targetExists) return Results.BadRequest(new { error = "Ziel-Song nicht gefunden" });
+            file.SongId = dto.TargetSongId;
+            await db.SaveChangesAsync();
+            return Results.Ok(file);
+        });
+
         app.MapDelete("/api/songs/{id:int}/files/{fileId:int}", async (AppDbContext db, IWebHostEnvironment env, int id, int fileId) =>
         {
             var file = await db.SongFiles.FirstOrDefaultAsync(f => f.Id == fileId && f.SongId == id);

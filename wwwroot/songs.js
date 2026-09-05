@@ -210,16 +210,21 @@ function renderSongBody(song) {
       ${allRatingsHtml}
     </div>
     <div style="margin-top:16px;">
-      <strong style="font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;">Aufnahmen</strong>
-      ${filesHtml}
-      <div class="file-add-row">
-        <label class="upload-label">
-          ↑ Hochladen
-          <input type="file" accept=".mp4,.mp3,.wav,.m4a,.ogg" onchange="uploadFile(${song.id}, this)" />
-        </label>
-        <button class="upload-label" onclick="openRecorder(${song.id})">🎙 Aufnehmen</button>
+      <button class="files-toggle" onclick="toggleFilesSection(${song.id})" style="background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:6px;padding:0;color:var(--muted);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-family:inherit;">
+        <span id="files-arrow-${song.id}" style="font-size:10px;transition:transform .15s;">▸</span>
+        Aufnahmen${detail.files.length > 0 ? ` (${detail.files.length})` : ""}
+      </button>
+      <div id="files-body-${song.id}" hidden>
+        <div style="margin-top:10px;">${filesHtml}</div>
+        <div class="file-add-row">
+          <label class="upload-label">
+            ↑ Hochladen
+            <input type="file" accept=".mp4,.mp3,.wav,.m4a,.ogg" onchange="uploadFile(${song.id}, this)" />
+          </label>
+          <button class="upload-label" onclick="openRecorder(${song.id})">🎙 Aufnehmen</button>
+        </div>
+        <div id="recorder-${song.id}" class="recorder-ui" hidden></div>
       </div>
-      <div id="recorder-${song.id}" class="recorder-ui" hidden></div>
     </div>
   `;
 }
@@ -252,6 +257,8 @@ function renderFileItem(songId, f) {
           ${f.durationSeconds ? `<span>⏱ ${fmtDuration(f.durationSeconds)}</span>` : ""}
           <span>${fmtSize(f.fileSize)}</span>
           ${avgText}
+          <a class="edit-btn" href="/uploads/songs/${f.fileName}" download="${esc(f.originalName)}" title="Herunterladen">⬇</a>
+          <button class="edit-btn" onclick="showMoveFile(${songId},${f.id})" title="Verschieben">↕</button>
           <button class="edit-btn" onclick="copyFileLink(this,${songId})" title="Link kopieren">🔗</button>
           <button class="edit-btn" onclick="notifyFile(${songId},${f.id})" title="Mitglieder benachrichtigen">🔔</button>
           <button class="edit-btn" onclick="startRenameFile(${songId},${f.id})" title="Umbenennen">✏</button>
@@ -531,6 +538,46 @@ async function deleteFile(songId, fileId) {
   if (!confirm("Datei löschen?")) return;
   await api(`/api/songs/${songId}/files/${fileId}`, { method: "DELETE" });
   await loadSongDetails(songId);
+  renderSongs();
+}
+
+function toggleFilesSection(songId) {
+  const body = document.getElementById(`files-body-${songId}`);
+  const arrow = document.getElementById(`files-arrow-${songId}`);
+  if (!body) return;
+  body.hidden = !body.hidden;
+  if (arrow) arrow.style.transform = body.hidden ? "" : "rotate(90deg)";
+}
+
+function showMoveFile(songId, fileId) {
+  document.querySelectorAll(".move-selector").forEach(el => el.remove());
+  const otherSongs = songs.filter(s => s.id !== songId);
+  if (otherSongs.length === 0) { alert("Keine anderen Songs vorhanden."); return; }
+  const options = otherSongs.map(s => `<option value="${s.id}">${esc(s.title)}</option>`).join("");
+  const div = document.createElement("div");
+  div.className = "move-selector";
+  div.style.cssText = "display:flex;gap:6px;align-items:center;margin-top:8px;flex-wrap:wrap;";
+  div.innerHTML = `
+    <select id="move-target-${fileId}" style="flex:1;min-width:140px;background:var(--panel-2);color:var(--text);border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-size:13px;">
+      <option value="">Song auswählen…</option>${options}
+    </select>
+    <button class="primary" style="padding:6px 12px;font-size:13px;" onclick="doMoveFile(${songId},${fileId})">Verschieben</button>
+    <button class="ghost" style="padding:6px 10px;font-size:13px;" onclick="this.closest('.move-selector').remove()">✕</button>
+  `;
+  document.getElementById(`file-item-${fileId}`)?.appendChild(div);
+}
+
+async function doMoveFile(songId, fileId) {
+  const sel = document.getElementById(`move-target-${fileId}`);
+  const targetSongId = parseInt(sel?.value);
+  if (!targetSongId) { alert("Bitte einen Song auswählen."); return; }
+  await api(`/api/songs/${songId}/files/${fileId}/move`, {
+    method: "PATCH",
+    body: JSON.stringify({ targetSongId })
+  });
+  delete songDetails[songId];
+  delete songDetails[targetSongId];
+  await Promise.all([loadSongDetails(songId), loadSongDetails(targetSongId)]);
   renderSongs();
 }
 
