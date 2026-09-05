@@ -253,14 +253,17 @@ function renderFileItem(songId, f) {
 
   return `
     <li class="file-item" id="file-item-${f.id}">
-      <div class="file-item-header" onclick="toggleFileCard(${f.id})" style="cursor:pointer;display:flex;align-items:center;gap:8px;padding:4px 0;">
-        <span id="file-card-arrow-${f.id}" style="font-size:10px;color:var(--muted);flex-shrink:0;transition:transform .15s;">▸</span>
-        <span class="file-link" id="file-name-${f.id}" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(f.originalName)}</span>
-        <span style="font-size:11px;color:var(--muted);white-space:nowrap;flex-shrink:0;">${metaPreview}</span>
+      <div style="display:flex;align-items:center;gap:8px;padding:4px 0;">
+        <div class="file-item-header" onclick="toggleFileCard(${f.id})" style="cursor:pointer;display:flex;align-items:center;gap:8px;flex:1;min-width:0;">
+          <span id="file-card-arrow-${f.id}" style="font-size:10px;color:var(--muted);flex-shrink:0;transition:transform .15s;">▸</span>
+          <span class="file-link" id="file-name-${f.id}" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(f.originalName)}</span>
+          <span style="font-size:11px;color:var(--muted);white-space:nowrap;flex-shrink:0;">${metaPreview}</span>
+        </div>
+        <button class="edit-btn" id="play-btn-${f.id}" onclick="toggleFilePlayer(${f.id})" title="Abspielen">▶</button>
       </div>
+      <div id="player-${f.id}" hidden>${playerHtml}</div>
       <div id="file-card-body-${f.id}" hidden>
         <div class="file-meta" style="margin-top:6px;">
-          <button class="edit-btn" id="play-btn-${f.id}" onclick="toggleFilePlayer(${f.id})" title="Abspielen">▶</button>
           <a class="edit-btn" href="/uploads/songs/${f.fileName}" download="${esc(f.originalName)}" title="Herunterladen">⬇</a>
           <button class="edit-btn" onclick="showMoveFile(${songId},${f.id})" title="Verschieben">↕</button>
           <button class="edit-btn" onclick="copyFileLink(this,${songId})" title="Link kopieren">🔗</button>
@@ -268,7 +271,6 @@ function renderFileItem(songId, f) {
           <button class="edit-btn" onclick="startRenameFile(${songId},${f.id})" title="Umbenennen">✏</button>
           <button class="del" onclick="deleteFile(${songId},${f.id})" title="Löschen">×</button>
         </div>
-        <div id="player-${f.id}" hidden>${playerHtml}</div>
         ${othersHtml}
         <div class="file-item-rating">
           <div class="stars">${fileStarsHtml(f.id, myStars)}</div>
