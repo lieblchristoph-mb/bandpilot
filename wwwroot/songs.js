@@ -244,14 +244,21 @@ function renderFileItem(songId, f) {
     ? `<video controls src="/uploads/songs/${f.fileName}" style="width:100%;max-height:200px;border-radius:6px;margin-top:6px;"></video>`
     : `<audio controls src="/uploads/songs/${f.fileName}" style="width:100%;margin-top:6px;"></audio>`;
 
+  const metaPreview = [
+    f.durationSeconds ? fmtDuration(f.durationSeconds) : null,
+    fmtSize(f.fileSize),
+    f.ratingCount > 0 ? `⌀ ${f.avgRating.toFixed(1)}★` : null
+  ].filter(Boolean).join(" · ");
+
   return `
     <li class="file-item" id="file-item-${f.id}">
-      <div class="file-item-main">
-        <span class="file-link" id="file-name-${f.id}">${esc(f.originalName)}</span>
-        <div class="file-meta">
-          ${f.durationSeconds ? `<span>⏱ ${fmtDuration(f.durationSeconds)}</span>` : ""}
-          <span>${fmtSize(f.fileSize)}</span>
-          ${avgText}
+      <div class="file-item-header" onclick="toggleFileCard(${f.id})" style="cursor:pointer;display:flex;align-items:center;gap:8px;padding:4px 0;">
+        <span id="file-card-arrow-${f.id}" style="font-size:10px;color:var(--muted);flex-shrink:0;transition:transform .15s;">▸</span>
+        <span class="file-link" id="file-name-${f.id}" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(f.originalName)}</span>
+        <span style="font-size:11px;color:var(--muted);white-space:nowrap;flex-shrink:0;">${metaPreview}</span>
+      </div>
+      <div id="file-card-body-${f.id}" hidden>
+        <div class="file-meta" style="margin-top:6px;">
           <button class="edit-btn" id="play-btn-${f.id}" onclick="toggleFilePlayer(${f.id})" title="Abspielen">▶</button>
           <a class="edit-btn" href="/uploads/songs/${f.fileName}" download="${esc(f.originalName)}" title="Herunterladen">⬇</a>
           <button class="edit-btn" onclick="showMoveFile(${songId},${f.id})" title="Verschieben">↕</button>
@@ -260,13 +267,13 @@ function renderFileItem(songId, f) {
           <button class="edit-btn" onclick="startRenameFile(${songId},${f.id})" title="Umbenennen">✏</button>
           <button class="del" onclick="deleteFile(${songId},${f.id})" title="Löschen">×</button>
         </div>
-      </div>
-      <div id="player-${f.id}" hidden>${playerHtml}</div>
-      ${othersHtml}
-      <div class="file-item-rating">
-        <div class="stars">${fileStarsHtml(f.id, myStars)}</div>
-        <input class="rating-note" id="file-note-${f.id}" type="text" placeholder="Kommentar (optional)" value="${esc(myNote)}" />
-        <button class="primary" style="padding:8px 14px;font-size:14px;" onclick="rateFile(${songId},${f.id})">Speichern</button>
+        <div id="player-${f.id}" hidden>${playerHtml}</div>
+        ${othersHtml}
+        <div class="file-item-rating">
+          <div class="stars">${fileStarsHtml(f.id, myStars)}</div>
+          <input class="rating-note" id="file-note-${f.id}" type="text" placeholder="Kommentar (optional)" value="${esc(myNote)}" />
+          <button class="primary" style="padding:8px 14px;font-size:14px;" onclick="rateFile(${songId},${f.id})">Speichern</button>
+        </div>
       </div>
     </li>`;
 }
@@ -535,6 +542,14 @@ async function deleteFile(songId, fileId) {
   await api(`/api/songs/${songId}/files/${fileId}`, { method: "DELETE" });
   await loadSongDetails(songId);
   renderSongs();
+}
+
+function toggleFileCard(fileId) {
+  const body = document.getElementById(`file-card-body-${fileId}`);
+  const arrow = document.getElementById(`file-card-arrow-${fileId}`);
+  if (!body) return;
+  body.hidden = !body.hidden;
+  if (arrow) arrow.style.transform = body.hidden ? "" : "rotate(90deg)";
 }
 
 function toggleFilePlayer(fileId) {
