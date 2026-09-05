@@ -210,21 +210,16 @@ function renderSongBody(song) {
       ${allRatingsHtml}
     </div>
     <div style="margin-top:16px;">
-      <button class="files-toggle" onclick="toggleFilesSection(${song.id})" style="background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:6px;padding:0;color:var(--muted);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-family:inherit;">
-        <span id="files-arrow-${song.id}" style="font-size:10px;transition:transform .15s;">▸</span>
-        Aufnahmen${detail.files.length > 0 ? ` (${detail.files.length})` : ""}
-      </button>
-      <div id="files-body-${song.id}" hidden>
-        <div style="margin-top:10px;">${filesHtml}</div>
-        <div class="file-add-row">
-          <label class="upload-label">
-            ↑ Hochladen
-            <input type="file" accept=".mp4,.mp3,.wav,.m4a,.ogg" onchange="uploadFile(${song.id}, this)" />
-          </label>
-          <button class="upload-label" onclick="openRecorder(${song.id})">🎙 Aufnehmen</button>
-        </div>
-        <div id="recorder-${song.id}" class="recorder-ui" hidden></div>
+      <strong style="font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;">Aufnahmen</strong>
+      ${filesHtml}
+      <div class="file-add-row">
+        <label class="upload-label">
+          ↑ Hochladen
+          <input type="file" accept=".mp4,.mp3,.wav,.m4a,.ogg" onchange="uploadFile(${song.id}, this)" />
+        </label>
+        <button class="upload-label" onclick="openRecorder(${song.id})">🎙 Aufnehmen</button>
       </div>
+      <div id="recorder-${song.id}" class="recorder-ui" hidden></div>
     </div>
   `;
 }
@@ -257,6 +252,7 @@ function renderFileItem(songId, f) {
           ${f.durationSeconds ? `<span>⏱ ${fmtDuration(f.durationSeconds)}</span>` : ""}
           <span>${fmtSize(f.fileSize)}</span>
           ${avgText}
+          <button class="edit-btn" id="play-btn-${f.id}" onclick="toggleFilePlayer(${f.id})" title="Abspielen">▶</button>
           <a class="edit-btn" href="/uploads/songs/${f.fileName}" download="${esc(f.originalName)}" title="Herunterladen">⬇</a>
           <button class="edit-btn" onclick="showMoveFile(${songId},${f.id})" title="Verschieben">↕</button>
           <button class="edit-btn" onclick="copyFileLink(this,${songId})" title="Link kopieren">🔗</button>
@@ -265,7 +261,7 @@ function renderFileItem(songId, f) {
           <button class="del" onclick="deleteFile(${songId},${f.id})" title="Löschen">×</button>
         </div>
       </div>
-      ${playerHtml}
+      <div id="player-${f.id}" hidden>${playerHtml}</div>
       ${othersHtml}
       <div class="file-item-rating">
         <div class="stars">${fileStarsHtml(f.id, myStars)}</div>
@@ -541,12 +537,12 @@ async function deleteFile(songId, fileId) {
   renderSongs();
 }
 
-function toggleFilesSection(songId) {
-  const body = document.getElementById(`files-body-${songId}`);
-  const arrow = document.getElementById(`files-arrow-${songId}`);
-  if (!body) return;
-  body.hidden = !body.hidden;
-  if (arrow) arrow.style.transform = body.hidden ? "" : "rotate(90deg)";
+function toggleFilePlayer(fileId) {
+  const player = document.getElementById(`player-${fileId}`);
+  const btn = document.getElementById(`play-btn-${fileId}`);
+  if (!player) return;
+  player.hidden = !player.hidden;
+  if (btn) btn.textContent = player.hidden ? "▶" : "⏹";
 }
 
 function showMoveFile(songId, fileId) {
