@@ -89,7 +89,7 @@ public static class SongEndpoints
                 var mine = fr.FirstOrDefault(r => r.MemberId == memberId);
                 return new
                 {
-                    f.Id, f.SongId, f.FileName, f.OriginalName, f.FileSize, f.DurationSeconds,
+                    f.Id, f.SongId, f.FileName, f.OriginalName, f.FileSize, f.DurationSeconds, f.Bpm,
                     avgRating = fr.Any() ? (double?)fr.Average(r => r.Stars) : null,
                     ratingCount = fr.Count,
                     myRating = mine is null ? null : new { mine.Stars, mine.Note },
@@ -122,7 +122,10 @@ public static class SongEndpoints
             double? duration = double.TryParse(durationStr, System.Globalization.NumberStyles.Float,
                 System.Globalization.CultureInfo.InvariantCulture, out var d) && d > 0 ? d : null;
 
-            var songFile = new SongFile { SongId = id, FileName = storedName, OriginalName = file.FileName, FileSize = file.Length, DurationSeconds = duration };
+            var bpmStr = form["bpm"].ToString();
+            int? bpm = int.TryParse(bpmStr, out var b) && b > 0 ? b : null;
+
+            var songFile = new SongFile { SongId = id, FileName = storedName, OriginalName = file.FileName, FileSize = file.Length, DurationSeconds = duration, Bpm = bpm };
             db.SongFiles.Add(songFile);
             await db.SaveChangesAsync();
             return Results.Ok(songFile);

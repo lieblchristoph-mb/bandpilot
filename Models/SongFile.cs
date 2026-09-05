@@ -8,4 +8,5 @@ public class SongFile
     public string OriginalName { get; set; } = "";
     public long FileSize { get; set; }
     public double? DurationSeconds { get; set; }
+    public int? Bpm { get; set; }
 }

@@ -74,6 +74,7 @@ public static class DatabaseInitializer
             """);
 
         try { db.Database.ExecuteSqlRaw("ALTER TABLE SongFiles ADD COLUMN DurationSeconds REAL"); } catch { }
+        try { db.Database.ExecuteSqlRaw("ALTER TABLE SongFiles ADD COLUMN Bpm INTEGER"); } catch { }
         try { db.Database.ExecuteSqlRaw("ALTER TABLE Songs ADD COLUMN IsCover INTEGER NOT NULL DEFAULT 0"); } catch { }
         try { db.Database.ExecuteSqlRaw("ALTER TABLE Songs ADD COLUMN Category TEXT NOT NULL DEFAULT 'own'"); } catch { }
 

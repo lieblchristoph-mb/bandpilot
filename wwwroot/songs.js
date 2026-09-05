@@ -248,6 +248,7 @@ function renderFileItem(songId, f) {
   const metaPreview = [
     f.durationSeconds ? fmtDuration(f.durationSeconds) : null,
     fmtSize(f.fileSize),
+    f.bpm ? `${f.bpm} BPM` : null,
     f.ratingCount > 0 ? `⌀ ${f.avgRating.toFixed(1)}★` : null
   ].filter(Boolean).join(" · ");
 
@@ -469,10 +470,11 @@ async function uploadRecording(songId) {
   const ui = document.getElementById(`recorder-${songId}`);
   if (ui) ui.innerHTML = '<span style="color:var(--muted);font-size:13px;">Wird hochgeladen…</span>';
   const file = new File([s.blob], s.name, { type: s.blob.type });
-  const duration = await getFileDuration(file);
+  const [duration, bpm] = await Promise.all([getFileDuration(file), detectBpm(file)]);
   const formData = new FormData();
   formData.append("file", file);
   if (duration != null) formData.append("duration", String(duration));
+  if (bpm != null) formData.append("bpm", String(bpm));
   const res = await fetch(`/api/songs/${songId}/files`, {
     method: "POST",
     headers: { "X-Session-Token": session.token },
@@ -493,14 +495,48 @@ function discardRecording(songId) {
   if (ui) { ui.hidden = true; ui.innerHTML = ""; }
 }
 
+async function detectBpm(file) {
+  try {
+    const isAudio = /\.(mp3|wav|m4a|ogg|webm)$/i.test(file.name);
+    if (!isAudio) return null;
+    const arrayBuffer = await file.arrayBuffer();
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+    audioCtx.close();
+    const data = audioBuffer.getChannelData(0);
+    const sr = audioBuffer.sampleRate;
+    const maxSamples = Math.min(data.length, sr * 60);
+    const winSize = Math.floor(sr * 0.02);
+    const energies = [];
+    for (let i = 0; i < maxSamples - winSize; i += winSize) {
+      let e = 0;
+      for (let j = 0; j < winSize; j++) e += data[i + j] ** 2;
+      energies.push(e / winSize);
+    }
+    const onsets = energies.map((e, i) => i > 0 ? Math.max(0, e - energies[i - 1]) : 0);
+    const winRate = sr / winSize;
+    const minLag = Math.max(1, Math.round(winRate * 60 / 200));
+    const maxLag = Math.round(winRate * 60 / 60);
+    let bestLag = minLag, bestCorr = -Infinity;
+    for (let lag = minLag; lag <= maxLag; lag++) {
+      let corr = 0;
+      for (let i = 0; i < onsets.length - lag; i++) corr += onsets[i] * onsets[i + lag];
+      if (corr > bestCorr) { bestCorr = corr; bestLag = lag; }
+    }
+    const bpm = Math.round(winRate * 60 / bestLag);
+    return bpm >= 60 && bpm <= 200 ? bpm : null;
+  } catch { return null; }
+}
+
 async function uploadFile(songId, input) {
   const file = input.files[0];
   if (!file) return;
   input.disabled = true;
-  const duration = await getFileDuration(file);
+  const [duration, bpm] = await Promise.all([getFileDuration(file), detectBpm(file)]);
   const formData = new FormData();
   formData.append("file", file);
   if (duration != null) formData.append("duration", String(duration));
+  if (bpm != null) formData.append("bpm", String(bpm));
   const res = await fetch(`/api/songs/${songId}/files`, {
     method: "POST",
     headers: { "X-Session-Token": session.token },
