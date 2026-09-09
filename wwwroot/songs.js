@@ -614,12 +614,44 @@ function toggleFileCard(fileId) {
   if (arrow) arrow.style.transform = body.hidden ? "" : "rotate(90deg)";
 }
 
+let _activePlayerId = null;
+
 function toggleFilePlayer(fileId) {
   const player = document.getElementById(`player-${fileId}`);
   const btn = document.getElementById(`play-btn-${fileId}`);
   if (!player) return;
-  player.hidden = !player.hidden;
-  if (btn) btn.textContent = player.hidden ? "▶" : "⏹";
+
+  // Stop any currently playing file
+  if (_activePlayerId !== null && _activePlayerId !== fileId) {
+    const prev = document.getElementById(`player-${_activePlayerId}`);
+    const prevBtn = document.getElementById(`play-btn-${_activePlayerId}`);
+    if (prev) {
+      prev.querySelector('audio,video')?.pause();
+      prev.hidden = true;
+    }
+    if (prevBtn) prevBtn.textContent = "▶";
+    _activePlayerId = null;
+  }
+
+  const opening = player.hidden;
+  player.hidden = !opening;
+
+  if (opening) {
+    _activePlayerId = fileId;
+    if (btn) btn.textContent = "⏹";
+    const media = player.querySelector('audio,video');
+    if (media) media.play().catch(() => {});
+    // Reset button when audio ends naturally
+    media?.addEventListener('ended', () => {
+      if (btn) btn.textContent = "▶";
+      player.hidden = true;
+      _activePlayerId = null;
+    }, { once: true });
+  } else {
+    player.querySelector('audio,video')?.pause();
+    if (btn) btn.textContent = "▶";
+    _activePlayerId = null;
+  }
 }
 
 function showMoveFile(songId, fileId) {
