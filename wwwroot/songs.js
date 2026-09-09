@@ -616,6 +616,16 @@ function toggleFileCard(fileId) {
 
 let _activePlayerId = null;
 
+function playNextFile(fileId) {
+  const currentItem = document.getElementById(`file-item-${fileId}`);
+  if (!currentItem) return;
+  const items = [...currentItem.closest('.file-list')?.querySelectorAll('.file-item') ?? []];
+  const next = items[items.indexOf(currentItem) + 1];
+  if (!next) return;
+  const nextId = parseInt(next.id.replace('file-item-', ''));
+  if (nextId) toggleFilePlayer(nextId);
+}
+
 function toggleFilePlayer(fileId) {
   const player = document.getElementById(`player-${fileId}`);
   const btn = document.getElementById(`play-btn-${fileId}`);
@@ -641,11 +651,11 @@ function toggleFilePlayer(fileId) {
     if (btn) btn.textContent = "⏹";
     const media = player.querySelector('audio,video');
     if (media) media.play().catch(() => {});
-    // Reset button when audio ends naturally
     media?.addEventListener('ended', () => {
       if (btn) btn.textContent = "▶";
       player.hidden = true;
       _activePlayerId = null;
+      playNextFile(fileId);
     }, { once: true });
   } else {
     player.querySelector('audio,video')?.pause();
